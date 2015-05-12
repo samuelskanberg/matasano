@@ -1,6 +1,5 @@
 import re
 import base64
-print "foo"
 
 intToBase64 = {
     0: 'A',
@@ -81,42 +80,88 @@ def hexToByteArray(hexString):
 def bytesThreeTobase64Four(byteArray):
     # To binary
     assert(len(byteArray) <= 3)
-    print byteArray
-    for b in byteArray:
-        print bin(b)
-    bAll = (byteArray[0] << 16) | (byteArray[1] << 8) | (byteArray[2])
-    print 'Bin all: '+bin(bAll)
 
+    byteArrayNew = list(byteArray)
+
+    while len(byteArrayNew) < 3:
+        byteArrayNew.append(0)
+
+    bAll = 0
+    shifter = 0
+    for b in reversed(byteArrayNew):
+        bAll |= (b << shifter)
+        shifter += 8
+    
     # Get chunks of 6 bit numbers
     mask = int('111111', 2)
 
     # 0b10011 010110 000101 101110
 
-    b64_1 = bAll & mask
-    b64_2 = (bAll & (mask << 6)) >> 6
-    b64_3 = (bAll & (mask << 12)) >> 12
-    b64_4 = (bAll & (mask << 18)) >> 18
-    s = intToBase64[b64_4]+intToBase64[b64_3]+intToBase64[b64_2]+intToBase64[b64_1] 
-    print s
+    b64_1 = (bAll & (mask << 18)) >> 18
+    b64_2 = (bAll & (mask << 12)) >> 12
+    b64_3 = (bAll & (mask << 6)) >> 6
+    b64_4 = bAll & mask
 
+    paddingLength = 3-len(byteArray)
+
+    if paddingLength == 1:
+        s = intToBase64[b64_1]+intToBase64[b64_2]+intToBase64[b64_3]+'='
+    elif paddingLength == 2:
+        s = intToBase64[b64_1]+intToBase64[b64_2]+"=="
+    else:
+        s = intToBase64[b64_1]+intToBase64[b64_2]+intToBase64[b64_3]+intToBase64[b64_4] 
+    return s
+
+def breakIntoChunks(array, size):
+    resultArray = []
+
+    tempArray = []
+    counter = 0
+    for o in array:
+            tempArray.append(o)
+            counter +=1
+            if counter % size == 0:
+                resultArray.append(list(tempArray))
+                tempArray = []
+
+    if len(tempArray) > 0:
+        resultArray.append(list(tempArray))
+    return resultArray
 
 def byteArrayToBase64(byteArray):
-    base64Array = byteArray[0:2]
-    base64String = base64.b64encode(bytes(base64Array))
-    print base64String
+    # Break down into chunks of 3
+    choppedOfBytesArray = breakIntoChunks(byteArray, 3)
+    resultBase64 = ""
+    for a in choppedOfBytesArray:
+        s = bytesThreeTobase64Four(a)
+        resultBase64 += s
+
+    return resultBase64
 
 
 def hexToBase64(hexString):
     byteArray = hexToByteArray(hexString)
-    print 'Byte array: '
-    print byteArray
-    byteArrayToBase64(byteArray)
+    return byteArrayToBase64(byteArray)
 
+hexString = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d"
+expectedBase64String = "SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t"
+print "Hex: "+hexString
+print "len Hex: "+str(len(hexString))
 
-#hexString = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d"
+base64String = hexToBase64(hexString)
+print base64String
 
-#hexToBase64(hexString)
+## From http://en.wikipedia.org/wiki/Base64 - 'M', 'a', 'n'
+#byteArray = [0x4d, 0x61, 0x6e]
+#bytesThreeTobase64Four(byteArray)
+#
+## 'M', 'a'
+#byteArray = [0x4d, 0x61]
+#bytesThreeTobase64Four(byteArray)
+#
+## 'M'
+#byteArray = [0x4d]
+#bytesThreeTobase64Four(byteArray)
 
-# From http://en.wikipedia.org/wiki/Base64 - 'M', 'a', 'n'
-byteArray = [0x4d, 0x61, 0x6e]
-bytesThreeTobase64Four(byteArray)
+#x = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+#breakIntoChunks(x, 3)
