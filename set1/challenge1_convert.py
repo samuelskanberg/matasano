@@ -143,13 +143,16 @@ def hexToBase64(hexString):
     byteArray = hexToByteArray(hexString)
     return byteArrayToBase64(byteArray)
 
-hexString = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d"
-expectedBase64String = "SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t"
-print "Hex: "+hexString
-print "len Hex: "+str(len(hexString))
 
-base64String = hexToBase64(hexString)
-print base64String
+if __name__ == "__main__":
+    hexString = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d"
+    expectedBase64String = "SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t"
+    print "Hex: "+hexString
+    print "len Hex: "+str(len(hexString))
+
+    base64String = hexToBase64(hexString)
+    print base64String
+
 
 ## From http://en.wikipedia.org/wiki/Base64 - 'M', 'a', 'n'
 #byteArray = [0x4d, 0x61, 0x6e]
