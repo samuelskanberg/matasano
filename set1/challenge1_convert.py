@@ -77,6 +77,13 @@ def hexToByteArray(hexString):
         byteArray.append(int(hexChar, 16))
     return byteArray
 
+def byteArrayToHex(byteArray):
+    hexString = ""
+    for b in byteArray:
+        hexString += "%0.2x" % b
+
+    return hexString
+
 def bytesThreeTobase64Four(byteArray):
     # To binary
     assert(len(byteArray) <= 3)
@@ -153,18 +160,3 @@ if __name__ == "__main__":
     base64String = hexToBase64(hexString)
     print base64String
 
-
-## From http://en.wikipedia.org/wiki/Base64 - 'M', 'a', 'n'
-#byteArray = [0x4d, 0x61, 0x6e]
-#bytesThreeTobase64Four(byteArray)
-#
-## 'M', 'a'
-#byteArray = [0x4d, 0x61]
-#bytesThreeTobase64Four(byteArray)
-#
-## 'M'
-#byteArray = [0x4d]
-#bytesThreeTobase64Four(byteArray)
-
-#x = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-#breakIntoChunks(x, 3)
