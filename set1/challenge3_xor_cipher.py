@@ -37,24 +37,18 @@ def englishTextScore(text):
     uppercase = text.upper()
     #print lowercase
     byteArray = bytearray(uppercase)
-    #97-122
     score = 0
     for b in byteArray:
-        
         if chr(b) in letterFrequency:
             score += letterFrequency[chr(b)]
-            #score += 1
+        elif b < 32 or b > 122:
+            score -= 10
     return score
 
-
-if __name__ == "__main__":
-    encodedHex = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"
-    print encodedHex
-
-
+def getScoreList(encodedHex):
     encodedByteList = hexToByteArray(encodedHex)
-    print "bytearray as string: "
-    print str(bytearray(encodedByteList))
+    #print "bytearray as string: "
+    #print str(bytearray(encodedByteList))
 
     cipherList = range(0, 256)
     scoreList = {}
@@ -71,13 +65,33 @@ if __name__ == "__main__":
 
     # Print top 5 highest score
     highestValues = dict(sorted(scoreList.iteritems(), key=operator.itemgetter(1), reverse=True)[:5])
-    print highestValues
+    return highestValues
+
+def decodeString(encodedHex, b):
+    encodedByteList = hexToByteArray(encodedHex)
+    hexStr = ("%02x"%b)*(len(encodedHex)/2)
+    byteList = hexToByteArray(hexStr)
+    xorResult = byteArrayXOR(encodedByteList, byteList)
+    return str(bytearray(xorResult))
+
+
+if __name__ == "__main__":
+    encodedHex = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"
+    encodedByteList = hexToByteArray(encodedHex)
+    #print encodedHex
+
+
+    highestValues = getScoreList(encodedHex)
+
+    #print highestValues
     for key,value in highestValues.items():
         print "Key: 0x%02x, score: %d" % (key, value)
-        hexStr = ("%02x"%key)*(len(encodedHex)/2)
-        #print hexStr
-        byteList = hexToByteArray(hexStr)
-        xorResult = byteArrayXOR(encodedByteList, byteList)
-        print str(bytearray(xorResult))
+        decodedString = decodeString(encodedHex, key)
+        print decodedString
+        #hexStr = ("%02x"%key)*(len(encodedHex)/2)
+        ##print hexStr
+        #byteList = hexToByteArray(hexStr)
+        #xorResult = byteArrayXOR(encodedByteList, byteList)
+        #print str(bytearray(xorResult))
 
 
