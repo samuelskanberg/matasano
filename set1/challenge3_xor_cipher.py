@@ -3,7 +3,9 @@ from challenge2_xor import byteArrayXOR
 import operator
 
 # From http://www.math.cornell.edu/~mec/2003-2004/cryptography/subs/frequencies.html
+# Space is taken from http://www.macfreek.nl/memory/Letter_Distribution
 letterFrequency = {
+    ' ': 18,
     'E': 12.02,
     'T': 9.10,
     'A': 8.12,
@@ -42,7 +44,7 @@ def englishTextScore(text):
         if chr(b) in letterFrequency:
             score += letterFrequency[chr(b)]
         elif b < 32 or b > 122:
-            score -= 10
+            score -= 50
     return score
 
 def getScoreList(encodedHex):
