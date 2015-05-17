@@ -3,15 +3,11 @@ from challenge2_xor import byteArrayXOR
 
 def repeatingXORBytes(message, key):
     chunkedUp = breakIntoChunks(message, len(key))
-    print chunkedUp
     resultList = []
     for smallArray in chunkedUp:
         # Last array may not be as long as the key
         result = byteArrayXOR(smallArray, key[:len(smallArray)])
-        print result
         resultList.extend(result)
-    print "resultList: "
-    print resultList
     return resultList
 
 def repeatingXORString(message, key):
