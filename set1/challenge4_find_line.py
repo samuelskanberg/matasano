@@ -12,9 +12,10 @@ for line in f:
     maxValueKey = max(highestValues.iteritems(), key=operator.itemgetter(1))[0]
     score = highestValues[maxValueKey]
 
-    if score > 50:
+    if score > 3:
         decodedString = decodeString(line, maxValueKey)
+        print "Key: %d, score: %f" % (maxValueKey, score)
         print decodedString
-        print "Key: %d, score: %d" % (maxValueKey, score)
+        print ""
     #break
 

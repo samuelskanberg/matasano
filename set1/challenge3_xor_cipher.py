@@ -45,29 +45,28 @@ def englishTextScore(text):
             score += letterFrequency[chr(b)]
         elif b < 32 or b > 122:
             score -= 50
-    return score
+
+    normalizedScore = score*1.0/len(text)
+    return normalizedScore
+    #return score
 
 def getScoreList(encodedHex):
     encodedByteList = hexToByteArray(encodedHex)
-    #print "bytearray as string: "
-    #print str(bytearray(encodedByteList))
 
+    return getScoreListBytes(encodedByteList)
+
+def getScoreListBytes(encodedByteList):
     cipherList = range(0, 256)
     scoreList = {}
-    #cipherList = range(0, 10)
     for c in cipherList:
-        hexStr = ("%02x"%c)*(len(encodedHex)/2)
-        #print hexStr
+        hexStr = ("%02x"%c)*(len(encodedByteList))
         byteList = hexToByteArray(hexStr)
         xorResult = byteArrayXOR(encodedByteList, byteList)
 
         score = englishTextScore(str(bytearray(xorResult)))
-        #print "score: %d" % score
         scoreList[c] = score
 
-    # Print top 5 highest score
-    highestValues = dict(sorted(scoreList.iteritems(), key=operator.itemgetter(1), reverse=True)[:5])
-    return highestValues
+    return scoreList
 
 def decodeString(encodedHex, b):
     encodedByteList = hexToByteArray(encodedHex)
@@ -80,14 +79,14 @@ def decodeString(encodedHex, b):
 if __name__ == "__main__":
     encodedHex = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"
     encodedByteList = hexToByteArray(encodedHex)
-    #print encodedHex
 
+    scoreList = getScoreList(encodedHex)
 
-    highestValues = getScoreList(encodedHex)
+    highestValues = sorted(scoreList.iteritems(), key=operator.itemgetter(1), reverse=True)[:5]
 
     #print highestValues
-    for key,value in highestValues.items():
-        print "Key: 0x%02x, score: %d" % (key, value)
+    for key,value in highestValues:
+        print "Key: 0x%02x, score: %f" % (key, value)
         decodedString = decodeString(encodedHex, key)
         print decodedString
         #hexStr = ("%02x"%key)*(len(encodedHex)/2)
